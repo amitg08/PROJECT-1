@@ -1,0 +1,39 @@
+--Loading data--
+titanic_data = LOAD 'TitanicData.txt' USING PigStorage(',') AS (id:int, survived:int, class:int, name:chararray, sex:chararray,age:int, sibsp:int, parch:chararray, ticket:chararray, fare:float, cabin:chararray, embarked:chararray);
+
+
+--1. In this problem statement, we will find the average fare of each class.--
+grp_data = GROUP titanic_data BY class;
+grp_avg = FOREACH grp_data GENERATE group, AVG(titanic_data.fare);
+dump grp_avg;
+(1,84.15468752825701)
+(2,20.66218318109927)
+(3,13.675550210257411)
+
+--2. In this problem statement, we will find the number of people alive in each class and
+embarked at Southampton.--
+filter_data = FILTER titanic_data BY survived == 0 AND embarked == 'S';
+grp_data = GROUP filter_data BY class;
+cnt_data = FOREACH grp_data GENERATE group, COUNT(filter_data.survived);
+dump cnt_data;
+(1,53)
+(2,88)
+(3,286)
+
+--3. In this problem statement, we will find out number of males and females who died in each
+class.--
+filter_data = FILTER titanic_data BY survived == 1;
+grp_data = GROUP filter_data BY class;
+cnt_data = FOREACH grp_data GENERATE group, COUNT(filter_data.sex);
+dump cnt_data;
+(1,136)
+(2,87)
+(3,119)
+
+
+
+
+
+
+
+
